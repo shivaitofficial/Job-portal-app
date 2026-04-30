@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from .models import Job
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
@@ -17,3 +18,10 @@ def create(self, validated_data):
         email=validated_data['email'],
         password=validated_data['password']
     )
+
+class JobSerializer(serializers.ModelSerializer):
+    created_by=serializers.StringRelatedField()
+
+    class Meta:
+        model = Job
+        fields = '__all__'
