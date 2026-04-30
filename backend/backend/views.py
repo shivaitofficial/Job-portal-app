@@ -3,8 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegisterSerializer
 from django.contrib.auth.models import User
-from .models import Job
+from .models import Job,Application
 from .serializers import JobSerializer
+from .serializers import ApplicationSerializer
 
 @api_view(['GET'])
 def hello_api(request):
@@ -34,3 +35,17 @@ def job_list(request):
     jobs = Job.objects.all()
     serializer = JobSerializer(jobs,many=True)
     return  Response(serializer.data)
+
+
+@api_view(['POST'])
+def apply_job(request):
+    serializer=ApplicationSerializer(data=request.data)
+    job_id = request.data.get("job")
+    applicant_id = request.data.get("applicant")
+    # check application exists
+    if Application.objects.filter(job_id=job_id,applicant_id=applicant_id).exists():
+        return Response("You have already applied !!",status=status.HTTP_400_BAD_REQUEST)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message":"Application submitted"},status=status.HTTP_201_CREATED)
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
