@@ -1,7 +1,19 @@
 import React from 'react'
 import { useActionState } from "react"
-import { NavLink } from "react-router-dom"
+import { NavLink, useParams } from "react-router-dom"
 
+
+
+
+
+export default function ApplyJobPage() {
+
+ const  [result,formAction,isPending]=useActionState(ApplyJobAction,null,{
+        withPending:true
+    });
+
+const {jobId} = useParams();
+const userId = localStorage.getItem("userId");
 async function ApplyJobAction(_,formData)
 {
     //const json = Object.fromEntries(formData)
@@ -11,8 +23,8 @@ async function ApplyJobAction(_,formData)
             "Content-Type":"application/json"
         },
         body:JSON.stringify({
-            job:5,
-            applicant:1
+            job:jobId,
+            applicant:userId
         })
     });
 const data = await res.json();
@@ -27,15 +39,6 @@ const data = await res.json();
 
 //return data.message || "Failed to apply"
 }
-
-
-
-export default function ApplyJobPage() {
-
- const  [result,formAction,isPending]=useActionState(ApplyJobAction,null,{
-        withPending:true
-    });
-
 
 
   return (

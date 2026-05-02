@@ -1,20 +1,31 @@
 import React from 'react'
 import { useActionState } from "react"
-import { NavLink  } from 'react-router-dom';
-async function loginAction(_,formData)
-{
-    const json = Object.fromEntries(formData)
-    const res= await fetch('http://127.0.0.1:8000/login/',{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify(json)
-    });
-const data = await res.json();
-return data.message || "Login Failed"
-}
 
+import { useEffect } from "react";
+
+
+import { NavLink, useNavigate  } from 'react-router-dom';
+async function loginAction(_, formData) {
+  const json = Object.fromEntries(formData);
+
+  const res = await fetch('http://127.0.0.1:8000/login/', {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(json)
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    localStorage.setItem("userId", data["User id"]);
+    localStorage.setItem("userName", data["UserName"]);
+    return { message: data.message, success: true };
+  }
+
+  return { message: data.message || "Login Failed", success: false };
+}
 
 
 export default function LoginPage() {
@@ -24,6 +35,14 @@ export default function LoginPage() {
         withPending:true
     });
 
+    const navigate = useNavigate();
+    
+
+useEffect(() => {
+  if (message?.success) {
+    navigate("/jobs");
+  }
+}, [message, navigate]);
 
   return (
     
@@ -111,7 +130,9 @@ export default function LoginPage() {
          {isPending ? 'Logging in...':'Login'}
     </button>
 
-     <p className='text-center text-sm text-gray-500'>{message}</p>
+     <p className='text-center text-sm text-gray-500'>
+  {message?.message}
+</p>
 
     <p className="text-sm text-center text-gray-600">
         New to JobPortal?
