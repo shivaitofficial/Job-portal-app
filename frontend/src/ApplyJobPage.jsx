@@ -1,6 +1,6 @@
 import React from 'react'
 import { useActionState } from "react"
-
+import { NavLink } from "react-router-dom"
 
 async function ApplyJobAction(_,formData)
 {
@@ -66,14 +66,14 @@ export default function ApplyJobPage() {
 
    
     <div className="max-w-7xl mx-auto pt-6">
-      <a
-        href="/jobs"
+      <NavLink
+        to={"/jobs"}
         className="inline-flex items-center gap-2 mb-4
                text-sm font-medium text-blue-600
                hover:text-blue-700 hover:underline"
       >
         ← Back to Jobs
-      </a>
+      </NavLink>
     </div>
 
     
